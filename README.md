@@ -3,7 +3,7 @@
 ## 📖 Project Overview
 Welcome to my Security Operations Center (SOC) Home Lab. This project was built to simulate a realistic enterprise network environment, focusing on network segmentation, centralized log ingestion, and automated threat mitigation. 
 
-The primary goal of this lab is to demonstrate and learn about some cyberattacks, and practicing SOC operations so i builed a fully functional SOC Environment.
+The primary goal of this lab is to demonstrate and learn about some cyberattacks, and practicing SOC operations so i builed a fully functional SOC Environment to practice and learn.
 
 By integrating **CrowdSec** as an active Intrusion Prevention System (IPS), this lab also demonstrates automated defense mechanisms that detect and block malicious traffic in real-time.
 
