@@ -11,7 +11,7 @@ pfSense is deployed as a virtual machine in VMware. It acts as the default gatew
   <i>Figure 1: pfSense Dashboard showing WAN and LAN interface assignments</i>
 </p>
 
-*   **WAN Interface:** `192.168.80.133` (Exposed to the Kali attacker).
+*   **WAN Interface:** `192.168.80.133` (Exposed to the outside).
 *   **LAN Interface:** `192.168.1.1` (Internal enterprise gateway).
 
 ---
@@ -51,7 +51,7 @@ To ensure the internal machines have internet access independently of the Active
 ### Enable Forwarding Mode
 Forwarding Mode is enabled so pfSense forwards public internet queries (like `google.com`) to upstream DNS servers.
 
-<img width="1169" height="366" alt="Enable Forwarding Mode" src="https://github.com/user-attachments/assets/968fabd5-1abe-4436-9f61-180b4e7a11f2" />
+<img width="1147" height="99" alt="DNS Query Forwarding" src="https://github.com/user-attachments/assets/18db2464-7eb9-4680-b6c3-b56f6b6ee0d8" />
 
 *(Caption: Figure 4: pfSense DNS Resolver configured with Forwarding Mode)*
 
