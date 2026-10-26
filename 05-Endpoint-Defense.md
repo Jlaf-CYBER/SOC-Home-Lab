@@ -26,14 +26,16 @@ CrowdSec is a modern, open-source IDS/IPS that analyzes log streams to detect at
 The CrowdSec engine is configured with specific collections tailored for this lab. Using the `cscli` tool, we can verify the installed parsers and scenarios.
 
 <p align="center">
-<img width="914" height="221" alt="CrowdSec Collections" src="https://github.com/user-attachments/assets/2bec8959-2f84-4ebc-a029-205ae2c6a314" />
+<img width="914" height="221" alt="CrowdSec Collections" src="https://github.com/user-attachments/assets/f800df89-8d77-43f0-b4ab-318bf95b328a" />
   <br>
-  <i>Figure 2: CrowdSec Collections verifying Windows event parsing and brute-force detection</i>
+  <i>Figure 2: CrowdSec Collections verifying Windows event parsing and detection scenarios</i>
 </p>
 
-*   `crowdsecurity/windows`: Parses standard Windows Event Logs.
+As seen in the screenshot, several key collections are enabled:
+*   `crowdsecurity/windows`: Parses standard Windows Event Logs and includes brute-force detection logic.
 *   `crowdsecurity/windows-firewall`: Detects port scans and network anomalies in the firewall logs.
-*   `crowdsecurity/windows-bf`: Specifically detects brute-force attacks (Event ID 4625).
+*   `crowdsecurity/http-cve` & `base-http-scenarios`: Detects web-based attacks and CVEs (if web services are exposed).
+*   `crowdsecurity/whitelist-good-actors`: Prevents false positives by ignoring known safe IPs.
 
 ---
 
@@ -77,4 +79,8 @@ index = crowdsec
 ### Verifying the Engine Logs
 Here is the raw crowdsec.log file generating telemetry. You can see the engine loading its 53 scenarios, pulling threat intelligence from the Central API, and actively detecting and banning a brute-force attempt (192.168.80.1). This log file is being actively monitored by Splunk.
 
-<p align="center"> <img width="1000" alt="CrowdSec Log File" src="YOUR_CROWDSEC_LOG_SCREENSHOT_LINK" /> <br> <i>Figure 4: CrowdSec log file showing active parsing, API pull, and a brute-force ban decision</i> </p> ```
+<p align="center"> 
+<img width="865" height="607" alt="Crowdsec logs" src="https://github.com/user-attachments/assets/e7a59d69-b912-4caf-83bb-1a1f913be18c" />
+  <br>
+  <i>Figure 4: CrowdSec log file showing active parsing, API pull, and a brute-force ban decision</i> 
+</p> 
