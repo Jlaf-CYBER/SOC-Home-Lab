@@ -1,4 +1,4 @@
-# 05. Endpoint Security & CrowdSec (Active IPS)
+# 05. Endpoint Security & CrowdSec 
 
 The Windows 10 Client (`192.168.1.30`) serves as the primary target endpoint. To ensure deep visibility and active defense, it is equipped with Microsoft Sysmon for high-fidelity telemetry and CrowdSec for automated Intrusion Prevention (IPS).
 
