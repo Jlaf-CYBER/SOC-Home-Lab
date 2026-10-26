@@ -73,3 +73,8 @@ index = winlog_clients
 disabled = false
 sourcetype = crowdsec:log
 index = crowdsec
+```
+### Verifying the Engine Logs
+Here is the raw crowdsec.log file generating telemetry. You can see the engine loading its 53 scenarios, pulling threat intelligence from the Central API, and actively detecting and banning a brute-force attempt (192.168.80.1). This log file is being actively monitored by Splunk.
+
+<p align="center"> <img width="1000" alt="CrowdSec Log File" src="YOUR_CROWDSEC_LOG_SCREENSHOT_LINK" /> <br> <i>Figure 4: CrowdSec log file showing active parsing, API pull, and a brute-force ban decision</i> </p> ```
