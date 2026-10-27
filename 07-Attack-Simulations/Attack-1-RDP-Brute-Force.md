@@ -16,7 +16,7 @@ An external attacker on the WAN network identified an exposed RDP port (3389) on
 Using Hydra, the attacker targeted the pfSense WAN IP, which NAT-forwarded the traffic to the Windows 10 machine. Hydra cycled through the `rockyou.txt` wordlist, attempting hundreds of passwords per minute.
 
 <p align="center">
-  <img width="1000" alt="Hydra Attack Execution" src="YOUR_HYDRA_SCREENSHOT_LINK" />
+<img width="1366" height="768" alt="hydra" src="https://github.com/user-attachments/assets/d04d6b95-a0e9-44af-85c5-931f80ec6246" />
   <br>
   <i>Figure 1: Hydra brute-force attack targeting the exposed RDP port</i>
 </p>
@@ -73,7 +73,7 @@ Detailed Authentication Information:
 Within seconds of the attack starting, the CrowdSec Engine parsed the Windows Security logs, recognized the `crowdsecurity/windows-bf` (brute-force) pattern, and triggered a 4-hour ban. The Windows Firewall Bouncer immediately injected a DROP rule into the Windows Firewall, severing the attacker's connection.
 
 <p align="center"> 
-	<img width="800" alt="CrowdSec Ban" src="YOUR_CROWDSEC_SCREENSHOT_LINK" /> 
+<img width="967" height="614" alt="Ban list" src="https://github.com/user-attachments/assets/41a279fd-d32a-4363-9071-071eed60d01a" />
 	<br> 
 	<i>Figure 2: CrowdSec CLI showing the active ban on the Kali IP</i>
 </p>
