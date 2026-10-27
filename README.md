@@ -39,4 +39,4 @@ To explore the configurations and attack simulations in detail, navigate through
 *   **[04. Active Directory](04-Active-Directory.md)** - Domain controller setup and environment population.
 *   **[05. Endpoint Security & CrowdSec](05-Endpoint-Defense.md)** - Sysmon configs and Active IPS deployment.
 *   **[06. Isolated Malware Sandbox](06-Malware-Sandbox.md)** - Air-gapped FLARE-VM setup.
-*   **[07. Attack Simulations](07-Attack-and-Hunting.md)** - Brute-force execution, CrowdSec bans, and Splunk threat hunting.
+*   **[07. Attack Simulations](07-Attack-Simulations.md)** - Brute-force execution, CrowdSec bans, and Splunk threat hunting.
