@@ -57,29 +57,33 @@ Detailed Authentication Information:
 ```
 
 ## 🕵️ Analyst Breakdown of the Log:
-`Logon Type: 3` **(Network)**: This proves the login attempt is coming over the network, not a physical keyboard attached to the machine.
+* `Logon Type: 3` **(Network)**: This proves the login attempt is coming over the network, not a physical keyboard attached to the machine.
 
-`Workstation`` **Name: kali: The attacker's machine name is explicitly leaked in the NTLM authentication attempt.
+* `Workstation Name: kali`: The attacker's machine name is explicitly leaked in the NTLM authentication attempt.
 
-Source Network Address: 192.168.80.1: Confirms the attack is originating from the external WAN network.
+* `Source Network Address: 192.168.80.1`: Confirms the attack is originating from the external WAN network.
 
-Sub Status: 0xC000006A: Indicates "User name is correct but the password is wrong." The attacker found a valid account (Administrator) but is guessing passwords.
+* `Sub Status: 0xC000006A`: Indicates "User name is correct but the password is wrong." The attacker found a valid account (`Administrator`) but is guessing passwords.
 
-Authentication Package: NTLM: RDP uses NTLM for initial authentication.
+* `Authentication Package: NTLM`: RDP uses NTLM for initial authentication.
 
 ---
 
 ## 4. Automated Defense (CrowdSec IPS)
-Within seconds of the attack starting, the CrowdSec Engine parsed the Windows Security logs, recognized the crowdsecurity/windows-bf (brute-force) pattern, and triggered a 4-hour ban. The Windows Firewall Bouncer immediately injected a DROP rule into the Windows Firewall, severing the attacker's connection.
+Within seconds of the attack starting, the CrowdSec Engine parsed the Windows Security logs, recognized the `crowdsecurity/windows-bf` (brute-force) pattern, and triggered a 4-hour ban. The Windows Firewall Bouncer immediately injected a DROP rule into the Windows Firewall, severing the attacker's connection.
 
-<p align="center"> <img width="800" alt="CrowdSec Ban" src="YOUR_CROWDSEC_SCREENSHOT_LINK" /> <br> <i>Figure 2: CrowdSec CLI showing the active ban on the Kali IP</i> </p>
+<p align="center"> 
+	<img width="800" alt="CrowdSec Ban" src="YOUR_CROWDSEC_SCREENSHOT_LINK" /> 
+	<br> 
+	<i>Figure 2: CrowdSec CLI showing the active ban on the Kali IP</i>
+</p>
 
 ---
 
 ## 5. Splunk Detection & Threat Hunting
 The SOC Analyst can use Splunk to visualize the attack. The Universal Forwarder successfully shipped both the Windows Security logs and the CrowdSec engine logs to the SIEM.
 
-Detection Query (SPL)
+## Detection Query (SPL)
 To aggregate the failed logins and identify the top attacking IPs:
 
 ```
@@ -89,21 +93,35 @@ index=winlog_clients EventCode=4625
 | sort - Failed_Attempts
 ```
 
-<p align="center"> <img width="800" alt="Splunk Detection Query" src="YOUR_SPLUNK_STATS_SCREENSHOT_LINK" /> <br> <i>Figure 3: Splunk aggregation showing 47 failed attempts against the Administrator account</i> </p>
-Raw Event Hunting
+<p align="center">
+	<img width="800" alt="Splunk Detection Query" src="YOUR_SPLUNK_STATS_SCREENSHOT_LINK" /> 
+	<br> 
+	<i>Figure 3: Splunk aggregation showing 47 failed attempts against the Administrator account</i> 
+</p>
+
+## Raw Event Hunting
 Filtering for the raw events provides the exact timeline of the attack:
 
-<p align="center"> <img width="800" alt="Splunk Raw Events" src="YOUR_SPLUNK_RAW_SCREENSHOT_LINK" /> <br> <i>Figure 4: Splunk search showing the flood of Event ID 4625 errors</i> </p>
-SIEM Alerting (CrowdSec Logs)
-Searching the crowdsec index in Splunk confirms the automated IPS action:
+<p align="center"> 
+	<img width="800" alt="Splunk Raw Events" src="YOUR_SPLUNK_RAW_SCREENSHOT_LINK" /> 
+	<br> 
+	<i>Figure 4: Splunk search showing the flood of Event ID 4625 errors</i> 
+</p>
 
-<p align="center"> <img width="800" alt="Splunk CrowdSec Logs" src="YOUR_SPLUNK_CROWDSEC_SCREENSHOT_LINK" /> <br> <i>Figure 5: Splunk ingesting the CrowdSec ban alert from the endpoint</i> </p>
+## SIEM Alerting (CrowdSec Logs)
+Searching the `crowdsec` index in Splunk confirms the automated IPS action:
+
+<p align="center"> 
+	<img width="800" alt="Splunk CrowdSec Logs" src="YOUR_SPLUNK_CROWDSEC_SCREENSHOT_LINK" /> 
+	<br> 
+	<i>Figure 5: Splunk ingesting the CrowdSec ban alert from the endpoint</i> 
+</p>
 
 ---
 
 ## 6. Reporting & Lessons Learned
-The Outcome: The attack was successfully mitigated by CrowdSec before a successful login could occur.
+* **The Outcome:** The attack was successfully mitigated by CrowdSec before a successful login could occur.
 
-Security Gap Identified: RDP should never be directly exposed to the WAN. In a production environment, RDP access should require a VPN connection or be placed behind a Zero Trust Network Access (ZTNA) solution.
+* **Security Gap Identified:** RDP should never be directly exposed to the WAN. In a production environment, RDP access should require a VPN connection or be placed behind a Zero Trust Network Access (ZTNA) solution.
 
-SIEM Note: Because this lab utilizes the Splunk Free license, scheduled alerting is disabled. In an enterprise environment, the SPL query above would be saved as a scheduled alert (running every 5 minutes) to notify the SOC team via email or ticketing system (like ServiceNow or TheHive).
+* **SIEM Note:** Because this lab utilizes the Splunk Free license, scheduled alerting is disabled. In an enterprise environment, the SPL query above would be saved as a scheduled alert (running every 5 minutes) to notify the SOC team via email or ticketing system (like ServiceNow or TheHive).
