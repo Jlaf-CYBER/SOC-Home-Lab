@@ -94,7 +94,7 @@ index=winlog_clients EventCode=4625
 ```
 
 <p align="center">
-	<img width="800" alt="Splunk Detection Query" src="YOUR_SPLUNK_STATS_SCREENSHOT_LINK" /> 
+<img width="1100" height="364" alt="Splunk SPL Alert" src="https://github.com/user-attachments/assets/8ecedb2f-cdf4-4458-8c6b-704b9cc5ab63" />
 	<br> 
 	<i>Figure 3: Splunk aggregation showing 47 failed attempts against the Administrator account</i> 
 </p>
@@ -103,7 +103,7 @@ index=winlog_clients EventCode=4625
 Filtering for the raw events provides the exact timeline of the attack:
 
 <p align="center"> 
-	<img width="800" alt="Splunk Raw Events" src="YOUR_SPLUNK_RAW_SCREENSHOT_LINK" /> 
+<img width="1310" height="727" alt="Splunk winlog 4625" src="https://github.com/user-attachments/assets/5563f88f-6eb7-4fc3-9cf1-dc8f34c9d830" />
 	<br> 
 	<i>Figure 4: Splunk search showing the flood of Event ID 4625 errors</i> 
 </p>
@@ -112,7 +112,7 @@ Filtering for the raw events provides the exact timeline of the attack:
 Searching the `crowdsec` index in Splunk confirms the automated IPS action:
 
 <p align="center"> 
-	<img width="800" alt="Splunk CrowdSec Logs" src="YOUR_SPLUNK_CROWDSEC_SCREENSHOT_LINK" /> 
+<img width="1310" height="728" alt="Splunk crowdsec" src="https://github.com/user-attachments/assets/a02813b9-c8e5-473c-a716-d844ccee3d83" />
 	<br> 
 	<i>Figure 5: Splunk ingesting the CrowdSec ban alert from the endpoint</i> 
 </p>
