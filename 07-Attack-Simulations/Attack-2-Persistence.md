@@ -59,10 +59,10 @@ The attack succeeded. The attacker established persistence by creating a task na
 ---
 
 ## 5. SIEM Detection & Threat Hunting
-Because the Universal Forwarder is configured to ship raw XML (`renderXml = true`), the SOC Analyst must use SPL `rex` commands to parse the data and extract the Indicators of Compromise (IoCs). 
+Because the Universal Forwarder is configured to ship raw XML , `rex` commands is used to parse the data and extract the Indicators of Compromise (IoCs). 
 
 ### The Detection Query
-We hunted for `schtasks.exe` spawning a `powershell.exe` process, and extracted the exact command line to confirm the malicious payload.
+I hunted for `schtasks.exe` spawning a `powershell.exe` process, and extracted the exact command line to confirm the malicious payload.
 
 ```splunk
 index=winlog_clients "*schtasks.exe*" "*powershell.exe*"
