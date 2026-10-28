@@ -13,7 +13,7 @@
 After compromising the `Administrator` credentials (via the RDP brute force), the attacker scanned the pfSense WAN IP to find a path for lateral movement. Nmap revealed that SMB (Port 445) was exposed.
 
 <p align="center">
-<img width="758" height="308" alt="nmap scan" src="https://github.com/user-attachments/assets/705638b1-4944-4d83-b221-fd0fc4df2539" />
+<img width="758" height="308" alt="nmap scan" src="https://github.com/user-attachments/assets/f257591c-ef45-48b8-bd27-d34b6535b792" />
   <br>
   <i>Figure 1: Nmap scan revealing exposed RDP (3389) and SMB (445) ports</i>
 </p>
@@ -31,12 +31,18 @@ The attacker used `impacket-psexec` to connect to the exposed SMB port and execu
 ### 🛡️ Windows Defender Intervention
 During the first attempt, **Windows Defender successfully detected and quarantined the psexec payload** (`VirTool:Win32/RemoteExec!pz`). This is a massive win for endpoint defense, proving that the AV is actively blocking lateral movement tools. 
 
+<p align="center">
+<img width="1116" height="656" alt="win security alert" src="https://github.com/user-attachments/assets/df3a1ad1-8009-468a-b0f2-0bd75ec9dadf" />
+  <br>
+  <i>Figure 2: Windows Defender successfully quarantining the Impacket psexec payload</i>
+</p>
+
 *(Note: To successfully generate the SIEM telemetry for this SOC investigation, Windows Defender was temporarily disabled to allow the remote execution to complete).*
 
 <p align="center">
-<img width="1114" height="352" alt="impacket command" src="https://github.com/user-attachments/assets/a817e6ce-ccbf-4aee-873a-d38a73fab70a" />
+<img width="1114" height="352" alt="impacket command" src="https://github.com/user-attachments/assets/d4add7c9-2771-4a00-a7a6-9666fd7cda51" />
   <br>
-  <i>Figure 2: Impacket psexec successfully creating the remote scheduled task</i>
+  <i>Figure 3: Impacket psexec successfully creating the remote scheduled task</i>
 </p>
 
 ---
@@ -45,9 +51,9 @@ During the first attempt, **Windows Defender successfully detected and quarantin
 The attack succeeded. The attacker established persistence by creating a task named `WindowsUpdateService` that triggers at system startup.
 
 <p align="center">
-<img width="1116" height="656" alt="WindowsUpdateService task scheduler" src="https://github.com/user-attachments/assets/b9dab631-9bcb-4139-9d11-311a2acfbee5" />
+<img width="1116" height="656" alt="WindowsUpdateService task scheduler" src="https://github.com/user-attachments/assets/1cc5a494-332e-4c35-b5d7-6b27af4f936b" />
   <br>
-  <i>Figure 3: Windows Task Scheduler showing the malicious task created by the attacker</i>
+  <i>Figure 4: Windows Task Scheduler showing the malicious task created by the attacker</i>
 </p>
 
 ---
@@ -66,9 +72,9 @@ index=winlog_clients "*schtasks.exe*" "*powershell.exe*"
 ```
 
 <p align="center">
-<img width="1327" height="418" alt="Splunk log 2" src="https://github.com/user-attachments/assets/113ae9b1-2a75-4c79-b3db-cda73f0f3949" />
+<img width="1327" height="418" alt="Splunk log 2" src="https://github.com/user-attachments/assets/52579a1d-cb43-437b-a91c-0de3846d786d" />
   <br>
-  <i>Figure 4: Splunk extraction revealing the hidden PowerShell payload and C2 IP</i>
+  <i>Figure 5: Splunk extracting the malicious scheduled task creation from Sysmon XML telemetry</i>
 </p>
 
 ### Analyst Breakdown of the Telemetry:
@@ -78,7 +84,31 @@ Looking at the extracted table, we can definitively prove the compromise:
 
 ---
 
-## 6. Reporting & Lessons Learned
-*   **The Outcome:** The attacker successfully executed a remote command and established persistence. 
-*   **Security Gap Identified:** SMB (Port 445) should **never** be exposed directly to the WAN. Furthermore, local administrator accounts should not be reused across environments.
-*   **SOC Engineering Note:** While Windows Defender blocked the initial execution, the attacker bypassed it. This highlights the importance of having **multiple layers of defense (Defense in Depth)**. Even if AV fails, Sysmon and Splunk provide the visibility required to detect the persistence mechanism.
+## 6. Post-Exploitation Potential
+If this had been a real attack and not contained, the successful execution of the `evil.ps1` payload on system startup would grant the attacker a persistent reverse shell. From there, the attacker could:
+*   Dump credentials (LSASS) to move laterally to the Domain Controller.
+*   Deploy ransomware across the enterprise network.
+*   Establish long-term espionage or data exfiltration channels.
+
+---
+
+## 7. Incident Response: Next Steps
+Upon detecting this alert, the SOC Tier 1 Analyst would take the following IR actions:
+1.  **Containment:** Immediately isolate the `Win10-SPLUNK-CLIENT` from the network via EDR or pfSense firewall rules.
+2.  **Eradication:** Delete the `WindowsUpdateService` scheduled task and terminate any malicious PowerShell processes.
+3.  **Recovery:** Reset the `Administrator` password (since it was compromised) and re-image the endpoint if necessary.
+4.  **Lessons Learned:** Close port 445 on the WAN firewall and enforce the principle of least privilege for local admin accounts.
+
+---
+
+## 8. Mitigations / Recommendations
+*   **Network Security:** SMB (Port 445) and RDP (Port 3389) should **never** be exposed directly to the internet. Require VPN access or a Zero Trust Network Access (ZTNA) solution.
+*   **Endpoint Security:** Enable Windows Defender Attack Surface Reduction (ASR) rules to block Office macros and script-based execution.
+*   **Logging & Monitoring:** Ensure Universal Forwarders are configured to capture Sysmon Event ID 1 (Process Creation) and Event ID 11 (File Creation) for critical directories (like `C:\Windows\System32\Tasks`).
+
+---
+
+## 9. What I Learned
+*   **Defense in Depth Works:** Even though the attacker got past the firewall and compromised credentials, Windows Defender blocked the initial psexec payload. Layered defenses are crucial.
+*   **SIEM Engineering Challenges:** I discovered that using `renderXml=true` in the Splunk Forwarder means you must use `rex` (Regular Expressions) to extract fields. In a production environment, I would deploy the **Splunk Add-on for Microsoft Windows** to handle this parsing natively.
+*   **Psexec Artifacts:** I learned to identify the specific artifacts left by `psexec`, such as the random temporary service executable (`XLoDyVd.exe`) and the remote service creation logged in Event ID 7045.
