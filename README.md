@@ -40,3 +40,4 @@ To explore the configurations and attack simulations in detail, navigate through
 *   **[05. Endpoint Security & CrowdSec](05-Endpoint-Defense.md)** - Sysmon configs and Active IPS deployment.
 *   **[06. Isolated Malware Sandbox](06-Malware-Sandbox.md)** - Air-gapped FLARE-VM setup.
 *   **[07. Attack Simulations](07-Attack-Simulations/README.md)** - Brute-force execution, CrowdSec bans, and Splunk threat hunting.
+*   **[08. Summary & Future Enhancements](08-Summary-and-Future.md)** - Project conclusion and next steps.
